@@ -158,6 +158,21 @@ function _IsTiledBottomRight() {
     return _IsTiledToBottom() && _IsTiledToRight()
 }
 
+
+lastMinimized = null;
+
+function manageMinimzed(client) {
+    lastMinimized = client
+}
+
+function restoreLastMinimized() {
+    if (lastMinimized !== null){    
+        lastMinimized.minimized = false;
+        workspace.activeClient = lastMinimized;
+        lastMinimized = null;
+    }    
+}
+
 function sendToScreenLeft() {
     workspace.sendClientToScreen(workspace.activeClient, _nextScreenLeft())
 }
@@ -281,9 +296,13 @@ var QuickTileRight = function() {
     }
 }
 
+workspace.clientMinimized.connect(manageMinimzed)
 
 var shortcutPrefix = "Quick Tile 2 "
 registerShortcut(shortcutPrefix + "Up", shortcutPrefix + "Up", "Meta+Up", QuickTileUp)
 registerShortcut(shortcutPrefix + "Down", shortcutPrefix + "Down", "Meta+Down", QuickTileDown)
 registerShortcut(shortcutPrefix + "Left", shortcutPrefix + "Left", "Meta+Left", QuickTileLeft)
 registerShortcut(shortcutPrefix + "Right", shortcutPrefix + "Right", "Meta+Right", QuickTileRight)
+
+registerShortcut(shortcutPrefix + "Restore Last Minimized", shortcutPrefix + "Restore Last Minimized", "Meta+Shift+Up", restoreLastMinimized)
+
