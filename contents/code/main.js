@@ -306,3 +306,5 @@ registerShortcut(shortcutPrefix + "Right", shortcutPrefix + "Right", "Meta+Right
 
 registerShortcut(shortcutPrefix + "Restore Last Minimized", shortcutPrefix + "Restore Last Minimized", "Meta+Shift+Up", restoreLastMinimized)
 
+registerShortcut(shortcutPrefix + "Send to screen Left", shortcutPrefix + "Send to screen Left", "Meta+Shift+Left", sendToScreenLeft)
+registerShortcut(shortcutPrefix + "Send to screen Right", shortcutPrefix + "Send to screen Right", "Meta+Shift+Right", sendToScreenRight)
