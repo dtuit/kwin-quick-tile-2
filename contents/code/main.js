@@ -104,6 +104,44 @@ function _IsTiledToQuadrant() {
     return false
 }
 
+function _isOnRightScreenEdge() {
+    const screenGeometry = _GetScreenGeometry()
+    const clientGeometry = _GetClientGeometryOnScreen()
+    if (clientGeometry.x + clientGeometry.width === screenGeometry.width) {
+        return true
+    }
+    return false
+}
+
+function _isOnLeftScreenEdge() {
+    const screenGeometry = _GetScreenGeometry()
+    const clientGeometry = _GetClientGeometryOnScreen()
+    if (clientGeometry.x === 0) {
+        return true
+    }
+    return false
+}
+
+function _nextScreenRight() {
+    next = workspace.activeClient.screen + 1
+    if (next > workspace.numScreens - 1){
+        return 0
+    }
+    else {
+        return next
+    }
+}
+
+function _nextScreenLeft() {
+    next = workspace.activeClient.screen - 1
+    if (next < 0) {
+        return workspace.numScreens - 1
+    }
+    else {
+        return next
+    }
+}
+
 function _IsTiledTopLeft() {
     return _IsTiledToTop() && _IsTiledToLeft()
 }
@@ -118,6 +156,14 @@ function _IsTiledBottomLeft() {
 
 function _IsTiledBottomRight() {
     return _IsTiledToBottom() && _IsTiledToRight()
+}
+
+function sendToScreenLeft() {
+    workspace.sendClientToScreen(workspace.activeClient, _nextScreenLeft())
+}
+
+function sendToScreenRight() {
+    workspace.sendClientToScreen(workspace.activeClient, _nextScreenRight())
 }
 
 var QuickTileUp = function() {
@@ -136,11 +182,10 @@ var QuickTileUp = function() {
     // BR > R
     } else if (_IsTiledBottomRight()) {
         workspace.slotWindowQuickTileRight()
-    // M > T
-    // this is probaly no good for multi-monitor
+    // M > Restored
     } else if (_IsMaximized()) {
-        workspace.slotWindowQuickTileTop()
-        workspace.slotWindowQuickTileTop()
+        workspace.slotWindowMaximize()
+    // Restored > M
     } else {
         workspace.slotWindowMaximize()
     }
@@ -162,10 +207,10 @@ var QuickTileDown = function() {
     // TR > R
     } else if (_IsTiledTopRight()) {
         workspace.slotWindowQuickTileRight()
-    // M > B
+    // M > Restored
     } else if (_IsMaximized()) {
-        workspace.slotWindowQuickTileBottom()
-        workspace.slotWindowQuickTileBottom()
+        workspace.slotWindowMaximize()
+    // Restored > M
     } else {
         workspace.slotWindowMinimize()
     }
@@ -187,8 +232,17 @@ var QuickTileLeft = function() {
     // M > L
     } else if (_IsMaximized()) {
         workspace.slotWindowQuickTileLeft()
-        workspace.slotWindowQuickTileLeft()
-    // R > L, BL > L, TL > L
+    // Loop screens with quadrant tiles
+    } else if (_IsTiledTopLeft() & _isOnLeftScreenEdge()) {
+        sendToScreenLeft()
+        workspace.slotWindowQuickTileTopRight()
+    } else if (_IsTiledBottomLeft() & _isOnLeftScreenEdge()){
+        sendToScreenLeft()
+        workspace.slotWindowQuickTileBottomRight()
+    // Loop screens with half panel tiles
+    } else if (_IsTiledLeft()){
+        sendToScreenLeft()
+        workspace.slotWindowQuickTileRight()
     } else {
         workspace.slotWindowQuickTileLeft()
     }
@@ -211,7 +265,17 @@ var QuickTileRight = function() {
     } else if (_IsMaximized()) {
         workspace.slotWindowQuickTileRight()
         workspace.slotWindowQuickTileRight()
-    // L > R, BR > R, TR > R
+    // Loop screens with quadrant tiles
+    } else if (_IsTiledTopRight() & _isOnRightScreenEdge()) {
+        sendToScreenRight()
+        workspace.slotWindowQuickTileTopLeft()
+    } else if (_IsTiledBottomRight() & _isOnRightScreenEdge()){
+        sendToScreenRight()
+        workspace.slotWindowQuickTileBottomLeft()
+    // Loop screens with half panel tiles
+    } else if (_IsTiledRight()) {
+        sendToScreenRight()
+        workspace.slotWindowQuickTileLeft()
     } else {
         workspace.slotWindowQuickTileRight()
     }
