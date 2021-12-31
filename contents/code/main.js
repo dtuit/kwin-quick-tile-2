@@ -279,7 +279,6 @@ var QuickTileRight = function() {
     // M > R
     } else if (_IsMaximized()) {
         workspace.slotWindowQuickTileRight()
-        workspace.slotWindowQuickTileRight()
     // Loop screens with quadrant tiles
     } else if (_IsTiledTopRight() & _isOnRightScreenEdge()) {
         sendToScreenRight()
